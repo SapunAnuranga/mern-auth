@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 
 import connectDB from './config/mongodb.js';
 import authRoutes from './routes/authRoutes.js';
+import userRouter from "./routes/userRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -16,5 +17,6 @@ app.use(cors({ credentials: true, origin: true }));
 
 app.get('/', (req, res) => res.send("API WORKING"));
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRouter);
 
 app.listen(port, () => console.log(`Server Started on PORT: ${port}`));
