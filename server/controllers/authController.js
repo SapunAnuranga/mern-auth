@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
 import transporter from '../config/nodemailer.js';
+import {EMAIL_VERIFY_TEMPLATE,RESET_PASSWORD_TEMPLATE,WELCOME_EMAIL_TEMPLATE} from '../config/emailTemplates.js';
 
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -35,7 +36,8 @@ export const register = async (req, res) => {
             from: process.env.SENDER_EMAIL,
             to: email,
             subject: 'Welcome to MyWebsite',
-            text: `Welcome to my website. Your account has been created with email ID: ${email}`
+            //text: `Welcome to my website. Your account has been created with email ID: ${email}`
+            html: WELCOME_EMAIL_TEMPLATE(user.name, user.email),
         };
 
         await transporter.sendMail(mailOption);
@@ -118,7 +120,8 @@ export const sendVerifyOtp = async (req, res) => {
             from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: 'Account Verification OTP',
-            text: `Hello ${user.name},\n\nYour OTP for verifying your account is: ${otp}.\nThis OTP will expire in 24 hours.\n\nThank you!`
+            //text: `Hello ${user.name},\n\nYour OTP for verifying your account is: ${otp}.\nThis OTP will expire in 24 hours.\n\nThank you!`
+            html: EMAIL_VERIFY_TEMPLATE(user.name, user.email, otp),
         };
 
         await transporter.sendMail(mailOption);
@@ -197,7 +200,8 @@ export const sendResetOtp = async (req, res) => {
             from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: 'Password Reset OTP',
-            text: `Hello ${user.name},\n\n Your OTP for password is  ${otp}.\n Use this OTP to proceed with resetting your password.`
+            //text: `Hello ${user.name},\n\n Your OTP for password is  ${otp}.\n Use this OTP to proceed with resetting your password.`
+            html: RESET_PASSWORD_TEMPLATE(user.name, user.email, otp),
         };
 
         await transporter.sendMail(mailOption);
@@ -244,5 +248,7 @@ export const resetPassword = async (req, res) => {
         return res.json({ success: false, message: error.message });
     }
 }
+
+
 
 
